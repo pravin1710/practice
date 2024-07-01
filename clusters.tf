@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "calendar-service_ecs_task" { //task definiti
   container_definitions = jsonencode([
     {
       name      = "${var.service-2}-container"
-      image     = "${var.aws_account_id}.dkr.ecr.us-east-1.amazonaws.com/calendar-service:latest"
+      image     = "${var.aws_account_id}.dkr.ecr.us-east-1.amazonaws.com/calendar-service:$github.sha"
       cpu       = 512
       memory    = 1024
       essential = true
