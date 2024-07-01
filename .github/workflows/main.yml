@@ -34,9 +34,9 @@ jobs:
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v4
         with:
-             role-to-assume: arn:aws:iam::590183913538:role/OIDC_development
-             aws-region: us-east-1
-             role-session-name: OIDC_development
+             role-to-assume: arn:aws:iam::${{ secrets.account_id }}:roleGithub_OIDC
+             aws-region: ap-south-1
+             role-session-name: Github_OIDC
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -46,8 +46,8 @@ jobs:
       - name: Terraform Init
         id: init
         env:
-          AWS_BUCKET_NAME: "leadsigma-terraform-state.tfstate"
-          AWS_BUCKET_KEY_NAME: "stateterraform_state.tfstate"
+          AWS_BUCKET_NAME: "sh-bucket"
+          AWS_BUCKET_KEY_NAME: "s-terraform"
         run: terraform init -upgrade 
    
       - name: Terraform Validate
