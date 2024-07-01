@@ -3,6 +3,11 @@ name: Iange scan
 on: 
    workflow_dispatch:
 
+permissions:
+      id-token: write # This is required for aws oidc connection
+      contents: read # This is required for actions/checkout
+      pull-requests: write # This is required for gh bot to comment PR
+
 jobs:
   terrascan_job:
     runs-on: ubuntu-latest
