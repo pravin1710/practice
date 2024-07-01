@@ -1,0 +1,49 @@
+name: Iange scan
+
+on: 
+   workflow_dispatch:
+
+permissions:
+      id-token: write # This is required for aws oidc connection
+      contents: read # This is required for actions/checkout
+      security-events: write
+
+jobs:
+  terrascan_job:
+    runs-on: ubuntu-latest
+    name: terrascan-action
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+           aws-access-key-id: ${{ secrets.STG_AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.STG_AWS_SECRET_ACCESS_KEY }}
+           aws-region: ap-south-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.4
+   
+      - name: Terraform Init
+        id: init
+        env:
+          AWS_BUCKET_NAME: "sh-bucket"
+          AWS_BUCKET_KEY_NAME: "s-terraform"
+        run: terraform init -upgrade 
+   
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+   
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -refresh=false  -no-color -out out.plan
+        continue-on-error: false
+   
+      - name: Terraform Apply
+        run: terraform destroy -auto-approve -input=false
