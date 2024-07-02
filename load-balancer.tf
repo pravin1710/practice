@@ -111,7 +111,7 @@ resource "aws_lb_target_group" "calander_service_fargates" { //load balancer tar
     matcher             = "200-299"
     path                = "/calendar-service/meta/health"
     port                = "traffic-port"
-    protocol            = "HTTP"
+    protocol            = "HTTPS"
     timeout             = 5
     unhealthy_threshold = 2
   }
