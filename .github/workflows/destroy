@@ -40,5 +40,5 @@ jobs:
           terraform plan -refresh=false  -no-color -out out.plan
         continue-on-error: false
    
-      - name: Terraform Apply
+      - name: Terraform destroy
         run: terraform destroy -auto-approve -input=false
