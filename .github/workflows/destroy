@@ -1,4 +1,4 @@
-name: Iange scan
+name: destroy 
 
 on: 
    workflow_dispatch:
