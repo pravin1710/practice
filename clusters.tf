@@ -20,18 +20,6 @@ resource "aws_cloudwatch_log_group" "log-group" { ##Log Group on CloudWatch to g
   }
 }
 
-resource "aws_ecs_cluster_capacity_providers" "this" { //manage the capacity providers associated with an ecs cluster
-  cluster_name = "${var.app_name}-${var.app_environment}-cluster"
-
-  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
-
-  default_capacity_provider_strategy {
-    base              = 1
-    weight            = 100
-    capacity_provider = "FARGATE"
-  }
-}
-
 resource "aws_ecs_task_definition" "calendar-service_ecs_task" { //task definition for calendar-service
   family                   = "${var.service-2}-task"
   requires_compatibilities = ["FARGATE"]
