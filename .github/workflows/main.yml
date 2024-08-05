@@ -47,6 +47,8 @@ jobs:
             bucket  =  "shaft-bucket"
 
             encrypt = true
+            
+            dynamodb_table = "lock-state"
 
             key 	= "stg_stateterraform_state.tfstate"
 
