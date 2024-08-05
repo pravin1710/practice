@@ -35,6 +35,46 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
            sarif_file: terrascan.sarif
+
+      - name: Create config.tf file
+        run: |
+          cat <<EOL > config.tf
+
+          terraform {
+
+            backend "s3" {
+
+            bucket  =  "shaft-bucket"
+
+            encrypt = true
+
+            key 	= "stg_stateterraform_state.tfstate"
+
+            region  = "ap-south-1"
+
+            }
+            required_providers {
+
+            aws = {
+
+              source  = "hashicorp/aws"
+
+              version = "~> 5.23.1"
+
+            }
+
+            }
+
+          }
+          provider "aws" {
+
+            region = "ap-south-1"
+
+          }
+
+          EOL
+
+          echo "Terraform configuration file created: config.tf"
        
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -51,7 +91,7 @@ jobs:
       - name: Terraform Init
         id: init
         env:
-          AWS_BUCKET_NAME: "sh-bucket"
+          AWS_BUCKET_NAME: "shaft-bucket"
           AWS_BUCKET_KEY_NAME: "s-terraform"
         run: terraform init -upgrade 
    
