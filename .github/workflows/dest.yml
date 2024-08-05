@@ -16,6 +16,46 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Create config.tf file
+        run: |
+          cat <<EOL > config.tf
+
+          terraform {
+
+            backend "s3" {
+
+            bucket  =  "shaft-bucket"
+
+            encrypt = true
+
+            key 	= "s-terraform"
+
+            region  = "ap-south-1"
+
+            }
+            required_providers {
+
+            aws = {
+
+              source  = "hashicorp/aws"
+
+              version = "~> 5.23.1"
+
+            }
+
+            }
+
+          }
+          provider "aws" {
+
+            region = "ap-south-1"
+
+          }
+
+          EOL
+
+          echo "Terraform configuration file created: config.tf"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
