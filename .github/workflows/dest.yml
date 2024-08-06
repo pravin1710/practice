@@ -28,7 +28,7 @@ jobs:
 
             encrypt = true
 
-            key 	= "s-terraform"
+            key 	= "stg_stateterraform_state.tfstate"
 
             region  = "ap-south-1"
 
@@ -85,5 +85,5 @@ jobs:
           terraform plan -refresh=false  -no-color -out out.plan
         continue-on-error: false
    
-      - name: Terraform Apply
+      - name: Terraform destroy
         run: terraform destroy -auto-approve -input=false
