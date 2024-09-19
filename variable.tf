@@ -187,6 +187,18 @@ variable "s3_transition_storage_class" {
   description = "if the transition is enabled . which storage it needs to move, possible options are IA_storage, Glacier"
 }
 
+variable "key_spec" {
+  default = "SYMMETRIC_DEFAULT"
+}
+
+variable "enabled" {
+  default = true
+}
+
+variable "rotation_enabled" {
+  default = true
+}
+
 
 
 
