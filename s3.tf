@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "services_env_bucket" {
-  bucket = "services-env-variables" # Specify your bucket name
+  bucket = "services-env-variabsles" # Specify your bucket name
 }
 
 resource "aws_s3_bucket_versioning" "s3_env_variables" {
