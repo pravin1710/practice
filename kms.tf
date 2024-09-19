@@ -16,106 +16,47 @@ resource "aws_kms_alias" "alias" {
 }
 
 resource "aws_kms_key_policy" "key_policy" {
-  key_id = aws_kms_key.staging_leadsigma_kms_key.id
-  policy = jsonencode(
-
-    {
-      "Version" : "2012-10-17",
-      "Id" : "Key policy created by CloudTrail",
-      "Statement" : [
-        {
-          "Sid" : "Enable IAM User Permissions",
-          "Effect" : "Allow",
-          "Principal" : {
-            "AWS" : [
-              "arn:aws:iam::${var.aws_account_id}:root",
-              "arn:aws:iam::${var.aws_account_id}:user/kiran"
-            ]
-          },
-          "Action" : "kms:*",
-          "Resource" : "*"
+  key_id = aws_kms_key.s3_key.id
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Id" : "Key policy for S3 object encryption",
+    "Statement" : [
+      {
+        "Sid" : "Allow S3 to use the key",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "s3.amazonaws.com"
         },
-        {
-          "Sid" : "Allow CloudTrail to encrypt logs",
-          "Effect" : "Allow",
-          "Principal" : {
-            "Service" : "cloudtrail.amazonaws.com"
-          },
-          "Action" : "kms:GenerateDataKey*",
-          "Resource" : "*",
-          "Condition" : {
-            "StringEquals" : {
-              "aws:SourceArn" : "arn:aws:cloudtrail:${var.aws_region}:${var.aws_account_id}:trail/stg-leadsigma"
-            },
-            "StringLike" : {
-              "kms:EncryptionContext:aws:cloudtrail:arn" : "arn:aws:cloudtrail:*:${var.aws_account_id}:trail/*"
-            }
-          }
-        },
-        {
-          "Sid" : "Allow CloudTrail to describe key",
-          "Effect" : "Allow",
-          "Principal" : {
-            "Service" : "cloudtrail.amazonaws.com"
-          },
-          "Action" : "kms:DescribeKey",
-          "Resource" : "*"
-        },
-        {
-          "Sid" : "Allow principals in the account to decrypt log files",
-          "Effect" : "Allow",
-          "Principal" : {
-            "AWS" : "*"
-          },
-          "Action" : [
-            "kms:Decrypt",
-            "kms:ReEncryptFrom"
-          ],
-          "Resource" : "*",
-          "Condition" : {
-            "StringEquals" : {
-              "kms:CallerAccount" : "${var.aws_account_id}"
-            },
-            "StringLike" : {
-              "kms:EncryptionContext:aws:cloudtrail:arn" : "arn:aws:cloudtrail:*:${var.aws_account_id}:trail/*"
-            }
-          }
-        },
-        {
-          "Sid" : "Allow alias creation during setup",
-          "Effect" : "Allow",
-          "Principal" : {
-            "AWS" : "*"
-          },
-          "Action" : "kms:CreateAlias",
-          "Resource" : "*",
-          "Condition" : {
-            "StringEquals" : {
-              "kms:CallerAccount" : "${var.aws_account_id}",
-              "kms:ViaService" : "ec2.${var.aws_region}.amazonaws.com"
-            }
-          }
-        },
-        {
-          "Sid" : "Enable cross account log decryption",
-          "Effect" : "Allow",
-          "Principal" : {
-            "AWS" : "*"
-          },
-          "Action" : [
-            "kms:Decrypt",
-            "kms:ReEncryptFrom"
-          ],
-          "Resource" : "*",
-          "Condition" : {
-            "StringEquals" : {
-              "kms:CallerAccount" : "${var.aws_account_id}"
-            },
-            "StringLike" : {
-              "kms:EncryptionContext:aws:cloudtrail:arn" : "arn:aws:cloudtrail:*:${var.aws_account_id}:trail/*"
-            }
+        "Action" : [
+          "kms:GenerateDataKey*",
+          "kms:Decrypt"
+        ],
+        "Resource" : "*",
+        "Condition" : {
+          "StringLike" : {
+            "kms:EncryptionContext:aws:s3:bucket" : "arn:aws:s3:::*"
           }
         }
-      ]
+      },
+      {
+        "Sid" : "Allow IAM users and roles to use the key",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : [
+            "arn:aws:iam::${var.aws_account_id}:root",
+            "arn:aws:iam::${var.aws_account_id}:user/someuser",
+            "arn:aws:iam::${var.aws_account_id}:role/somerole"
+          ]
+        },
+        "Action" : [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:ReEncryptFrom",
+          "kms:ReEncryptTo",
+          "kms:GenerateDataKey*"
+        ],
+        "Resource" : "*"
+      }
+    ]
   })
 }
