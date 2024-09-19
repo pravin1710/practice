@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "services_env_bucket" {
-  bucket = "services-envs-variabsles" # Specify your bucket name
+  bucket = "services-env-variabsles" # Specify your bucket name
 }
 
 resource "aws_s3_bucket_versioning" "s3_env_variables" {
@@ -7,18 +7,6 @@ resource "aws_s3_bucket_versioning" "s3_env_variables" {
   versioning_configuration {
     status = "Enabled"
   }
-}
-
-resource "aws_s3_bucket_object_lock_configuration" "env_variables_objects_lock" {
-  bucket = aws_s3_bucket.services_env_bucket.id
-
-  rule {
-    default_retention {
-      mode = "GOVERNANCE"
-      days = 5
-    }
-  }
-  depends_on = [aws_s3_bucket.services_env_bucket]
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "env_variables_lifecycle" {
