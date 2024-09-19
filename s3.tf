@@ -32,13 +32,6 @@ resource "aws_s3_bucket_object_lock_configuration" "env_variables_objects_lock" 
   depends_on = [aws_s3_bucket.services_env_bucket]
 }
 
-resource "aws_s3_bucket_logging" "env_variables_store" {
-  bucket = aws_s3_bucket.services_env_bucket.id
-
-  target_bucket = var.s3_target_bukcet
-  target_prefix = "env_variables/"
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "env_variables_lifecycle" {
   count  = var.lifecycle_enabled ? 1 : 0
   bucket = aws_s3_bucket.services_env_bucket.id
@@ -63,5 +56,5 @@ resource "aws_s3_object" "leadsigma-service" {
   bucket   = aws_s3_bucket.services_env_bucket.id
   key      = "services-variables/${each.value}"
   acl      = "private"
-  source  = file("${path.module}/env_variables/${each.value}")
+  content  = file("${path.module}/env_variables/${each.value}")
 }
