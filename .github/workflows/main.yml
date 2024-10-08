@@ -44,7 +44,7 @@ jobs:
 
             backend "s3" {
 
-            bucket  =  "shaft-bucket"
+            bucket  =  "draf-shaf"
 
             encrypt = true
             
@@ -93,7 +93,7 @@ jobs:
       - name: Terraform Init
         id: init
         env:
-          AWS_BUCKET_NAME: "shaft-bucket"
+          AWS_BUCKET_NAME: "draf-shaf"
           AWS_BUCKET_KEY_NAME: "s-terraform"
         run: terraform init -upgrade 
    
