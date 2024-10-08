@@ -37,13 +37,12 @@ resource "aws_ecs_task_definition" "calendar-service_ecs_task" { //task definiti
       cpu       = 512
       memory    = 1024
       essential = true
-      healthCheck = 
-                command = ["CMD-SHELL","curl -f http://localhost/health || exit 1"],
-                interval = 30,
-                timeout = 5,
-                retries = 3
-            }
-
+      healthCheck = {
+        command     = ["CMD-SHELL", "curl -f http://localhost/health || exit 1"]
+        interval    = 30
+        timeout     = 5
+        retries     = 3
+      }
       portMappings = [
         {
           containerPort = 8080
